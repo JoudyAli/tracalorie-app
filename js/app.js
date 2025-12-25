@@ -77,7 +77,6 @@ class Meal {
     this.id = Math.random().toString(16).slice(2);
     this.name = name;
     this.calories = calories;
-    tracker._render();
   }
 }
 
@@ -86,7 +85,6 @@ class Workout {
     this.id = Math.random().toString(16).slice(2);
     this.name = name;
     this.calories = calories;
-    tracker._render();
   }
 }
 
@@ -95,7 +93,7 @@ const tracker = new CalorieTracker();
 const breakfast = new Meal('Breakfast', 400);
 tracker.addMeal(breakfast);
 
-const run = new Workout('Morning Run', 320);
+const run = new Workout('Morning Run', 100);
 tracker.addWorkout(run);
 
 console.log(tracker._meals);
