@@ -109,7 +109,7 @@ const tracker = new CalorieTracker();
 
 const breakfast = new Meal('Breakfast', 400);
 tracker.addMeal(breakfast);
-const lunch = new Meal('Lunch', 7000);
+const lunch = new Meal('Lunch', 200);
 tracker.addMeal(lunch);
 
 const run = new Workout('Morning Run', 350);
