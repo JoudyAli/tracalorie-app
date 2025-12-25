@@ -15,11 +15,13 @@ class CalorieTracker {
   addMeal(meal) {
     this._meals.push(meal);
     this._totalCalories += meal.calories;
+    this._render();
   }
 
   addWorkout(workout) {
     this._workouts.push(workout);
     this._totalCalories -= workout.calories;
+    this._render();
   }
 
   _displayCaloriesTotal() {
@@ -75,6 +77,7 @@ class Meal {
     this.id = Math.random().toString(16).slice(2);
     this.name = name;
     this.calories = calories;
+    tracker._render();
   }
 }
 
@@ -83,6 +86,7 @@ class Workout {
     this.id = Math.random().toString(16).slice(2);
     this.name = name;
     this.calories = calories;
+    tracker._render();
   }
 }
 
