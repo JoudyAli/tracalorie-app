@@ -27,6 +27,26 @@ class CalorieTracker {
     this._render();
   }
 
+  removeMeal(id) {
+    const index = this._meals.findIndex((meal) => meal.id === id);
+    if (index !== -1) {
+      const meal = this._meals[index];
+      this._meals.splice(index, 1);
+      this._totalCalories -= meal.calories;
+      this._render();
+    }
+  }
+
+  removeWorkout(id) {
+    const index = this._workouts.findIndex((workout) => workout.id === id);
+    if (index !== -1) {
+      const workout = this._workouts[index];
+      this._workouts.splice(index, 1);
+      this._totalCalories += workout.calories;
+      this._render();
+    }
+  }
+
   _displayCaloriesTotal() {
     document.getElementById('calories-total').innerHTML = this._totalCalories;
   }
@@ -52,20 +72,18 @@ class CalorieTracker {
   }
 
   _displayCaloriesRemaining() {
-    const remainingEl = document.getElementById('calories-remaining');
+    const caloriesRemainingEl = document.getElementById('calories-remaining');
     const progressEl = document.getElementById('calorie-progress');
     const remaining = this._calorieLimit - this._totalCalories;
-
-    remainingEl.innerHTML = remaining;
-
+    caloriesRemainingEl.innerHTML = remaining;
     if (remaining <= 0) {
-      remainingEl.parentElement.classList.remove('bg-light');
-      remainingEl.parentElement.classList.add('bg-danger');
+      caloriesRemainingEl.parentElement.classList.remove('bg-light');
+      caloriesRemainingEl.parentElement.classList.add('bg-danger');
       progressEl.classList.add('bg-danger');
       progressEl.classList.remove('bg-success');
     } else {
-      remainingEl.parentElement.classList.remove('bg-danger');
-      remainingEl.parentElement.classList.add('bg-light');
+      caloriesRemainingEl.parentElement.classList.remove('bg-danger');
+      caloriesRemainingEl.parentElement.classList.add('bg-light');
       progressEl.classList.remove('bg-danger');
       progressEl.classList.add('bg-success');
     }
@@ -74,7 +92,8 @@ class CalorieTracker {
   _displayCaloriesProgress() {
     const progressEl = document.getElementById('calorie-progress');
     const percentage = (this._totalCalories / this._calorieLimit) * 100;
-    progressEl.style.width = `${Math.min(percentage, 100)}%`;
+    const width = Math.min(percentage, 100);
+    progressEl.style.width = `${width}%`;
   }
 
   _displayNewMeal(meal) {
@@ -124,7 +143,7 @@ class CalorieTracker {
     this._displayCaloriesConsumed();
     this._displayCaloriesBurned();
     this._displayCaloriesRemaining();
-    this._displayCaloriesProgress(); // ✅ التصليح الوحيد
+    this._displayCaloriesProgress();
   }
 }
 
@@ -155,11 +174,18 @@ class App {
     document
       .getElementById('workout-form')
       .addEventListener('submit', this._newItem.bind(this, 'workout'));
+
+    document
+      .getElementById('meal-items')
+      .addEventListener('click', this._removeItem.bind(this, 'meal'));
+
+    document
+      .getElementById('workout-items')
+      .addEventListener('click', this._removeItem.bind(this, 'workout'));
   }
 
   _newItem(type, e) {
     e.preventDefault();
-
     const name = document.getElementById(`${type}-name`);
     const calories = document.getElementById(`${type}-calories`);
 
@@ -171,7 +197,6 @@ class App {
     if (type === 'meal') {
       this._tracker.addMeal(new Meal(name.value, +calories.value));
     }
-
     if (type === 'workout') {
       this._tracker.addWorkout(new Workout(name.value, +calories.value));
     }
@@ -181,6 +206,22 @@ class App {
 
     const collapseItem = document.getElementById(`collapse-${type}`);
     new bootstrap.Collapse(collapseItem, { toggle: true });
+  }
+
+  _removeItem(type, e) {
+    if (
+      e.target.classList.contains('delete') ||
+      e.target.classList.contains('fa-xmark')
+    ) {
+      if (confirm('Are you sure?')) {
+        const id = e.target.closest('.card').getAttribute('data-id');
+        type === 'meal'
+          ? this._tracker.removeMeal(id)
+          : this._tracker.removeWorkout(id);
+        const item = e.target.closest('.card');
+        item.remove();
+      }
+    }
   }
 }
 
