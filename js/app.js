@@ -54,12 +54,21 @@ class CalorieTracker {
     this._render();
   }
 
+  setLimit(calorieLimit) {
+    this._calorieLimit = calorieLimit;
+
+    this._displayCaloriesLimit();
+    this._render();
+  }
+
   _displayCaloriesTotal() {
-    document.getElementById('calories-total').innerHTML = this._totalCalories;
+    const totalCaloriesEl = document.getElementById('calories-total');
+    totalCaloriesEl.innerHTML = this._totalCalories;
   }
 
   _displayCaloriesLimit() {
-    document.getElementById('calories-limit').innerHTML = this._calorieLimit;
+    const calorieLimitEl = document.getElementById('calories-limit');
+    calorieLimitEl.innerHTML = this._calorieLimit;
   }
 
   _displayCaloriesConsumed() {
@@ -70,7 +79,7 @@ class CalorieTracker {
       0
     );
 
-    document.getElementById('calories-consumed').innerHTML = consumed;
+    caloriesConsumedEl.innerHTML = consumed;
   }
 
   _displayCaloriesBurned() {
@@ -81,7 +90,7 @@ class CalorieTracker {
       0
     );
 
-    document.getElementById('calories-burned').innerHTML = burned;
+    caloriesBurnedEl.innerHTML = burned;
   }
 
   _displayCaloriesRemaining() {
@@ -116,16 +125,16 @@ class CalorieTracker {
     mealEl.setAttribute('data-id', meal.id);
     mealEl.innerHTML = `
     <div class="card-body">
-        <div class="d-flex align-items-center justify-content-between">
-          <h4 class="mx-1">${meal.name}</h4>
-          <div class="fs-1 bg-primary text-white text-center rounded-2 px-2 px-sm-5">
-            ${meal.calories}
-          </div>
-          <button class="delete btn btn-danger btn-sm mx-2">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+      <div class="d-flex align-items-center justify-content-between">
+        <h4 class="mx-1">${meal.name}</h4>
+        <div class="fs-1 bg-primary text-white text-center rounded-2 px-2 px-sm-5">
+          ${meal.calories}
         </div>
-      </div>
+        <button class="delete btn btn-danger btn-sm mx-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+  </div>
     `;
     mealsEl.appendChild(mealEl);
   }
@@ -207,6 +216,10 @@ class App {
     document
       .getElementById('reset')
       .addEventListener('click', this._reset.bind(this));
+
+    document
+      .getElementById('limit-form')
+      .addEventListener('submit', this._setLimit.bind(this));
   }
 
   _newItem(type, e) {
@@ -273,6 +286,23 @@ class App {
       document.getElementById('filter-meals').value = '';
       document.getElementById('filter-workouts').value = '';
     }
+  }
+
+  _setLimit(e) {
+    e.preventDefault();
+    const limit = document.getElementById('limit');
+
+    if (limit.value === '') {
+      alert('Please add a limit');
+      return;
+    }
+
+    this._tracker.setLimit(+limit.value);
+    limit.value = '';
+
+    const modalEl = document.getElementById('limit-modal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
   }
 }
 
