@@ -1,3 +1,4 @@
+// Starting Point of the Application
 class CalorieTracker {
   constructor() {
     this._calorieLimit = Storage.getCalorieLimit();
